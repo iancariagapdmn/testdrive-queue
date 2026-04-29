@@ -5,20 +5,20 @@ const { getDB } = require('../db');
 
 // ── Semaphore SMS ─────────────────────────────────────────────────────────────
 async function sendSMS(contactNumber, ticketNumber, carDisplay) {
-    const url   = process.env.TRACCAR_URL;
+    const url = process.env.TRACCAR_URL;
     const token = process.env.TRACCAR_TOKEN;
     if (!url || !token || !contactNumber) return;
 
     const to = contactNumber.replace(/^0/, '+63');
     const message =
-        `Hello! Your ticket ${ticketNumber} is now being called for the ` +
-        `${carDisplay} test drive. Please proceed to the area.`;
+        `Hi! Your ${carDisplay} is ready for you. Ticket ${ticketNumber} ` +
+        `Kindly proceed to the Omoda & Jaecoo test drive area.`;
 
     try {
         const res = await fetch(`${url}/`, {
-            method:  'POST',
+            method: 'POST',
             headers: {
-                'Content-Type':  'application/json',
+                'Content-Type': 'application/json',
                 'Authorization': token,
             },
             body: JSON.stringify({ to, message }),

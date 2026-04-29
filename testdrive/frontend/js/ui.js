@@ -142,7 +142,6 @@ async function checkCurrentTicket() {
         document.getElementById('ticket-number').textContent  = reg.ticketNumber;
         document.getElementById('ticket-car').textContent     = reg.carDisplay;
         document.getElementById('ticket-name').textContent    = reg.name;
-        document.getElementById('ticket-contact').textContent = reg.contact;
         document.getElementById('ticket-date').textContent    = `${reg.date} ${reg.time}`;
 
         const position = regs.findIndex(r => r.id === reg.id) + 1;

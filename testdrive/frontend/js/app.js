@@ -14,23 +14,15 @@ init();
 document.getElementById('registration-form').addEventListener('submit', async function (e) {
     e.preventDefault();
 
-    const name                  = document.getElementById('reg-name').value.trim();
-    const address               = document.getElementById('reg-address').value.trim();
-    const contact               = document.getElementById('reg-contact').value.trim();
-    const preferredTransacType  = document.getElementById('reg-PrefTransac').value.trim();
-    const customerType          = document.getElementById('reg-customer').value.trim();
-    const salesConsultantName   = document.getElementById('reg-consult').value.trim();
-    const dealershipName        = document.getElementById('reg-dealer').value.trim();
+    const name    = document.getElementById('reg-name').value.trim();
+    const address = document.getElementById('reg-address')?.value.trim() || '';
+    const contact = document.getElementById('reg-contact').value.trim();
     const carInput = document.querySelector('input[name="car"]:checked');
 
     if (!carInput) return showNotification('Please select a car model', 'error');
 
     try {
-        const reg = await RegistrationsAPI.create({
-            name, address, contact,
-            preferredTransacType, customerType, salesConsultantName, dealershipName,
-            carId: carInput.value
-        });
+        const reg = await RegistrationsAPI.create({ name, address, contact, carId: carInput.value });
 
         // Store ticket ID locally so the user can retrieve it on "My Ticket"
         localStorage.setItem('currentTicketId', reg.id);

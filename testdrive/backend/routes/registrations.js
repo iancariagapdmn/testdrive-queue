@@ -1,52 +1,16 @@
 // backend/routes/registrations.js
-const express     = require('express');
-const router      = express.Router();
-const https       = require('https');
-const querystring = require('querystring');
-const { getDB }   = require('../db');
-
-// ── Semaphore SMS ─────────────────────────────────────────────────────────────
-function sendSMS(to, message) {
-    return new Promise((resolve, reject) => {
-        const payload = querystring.stringify({
-            apikey:     process.env.SEMAPHORE_API_KEY,
-            number:     to,
-            message:    message,
-            sendername: process.env.SEMAPHORE_SENDER || 'SEMAPHORE',
-        });
-
-        const options = {
-            hostname: 'api.semaphore.co',
-            path:     '/api/v4/messages',
-            method:   'POST',
-            headers: {
-                'Content-Type':   'application/x-www-form-urlencoded',
-                'Content-Length': Buffer.byteLength(payload),
-            },
-        };
-
-        const req = https.request(options, res => {
-            let data = '';
-            res.on('data', chunk => data += chunk);
-            res.on('end', () => {
-                console.log('[Semaphore] Response:', data);
-                resolve(data);
-            });
-        });
-        req.on('error', reject);
-        req.write(payload);
-        req.end();
-    });
-}
+const express = require('express');
+const router  = require('express').Router();
+const { getDB } = require('../db');
 
 // ── Mapper ────────────────────────────────────────────────────────────────────
 function mapReg(r) {
     return {
-        id:r.id, ticketNumber:r.ticket_number, name:r.name, address:r.address,
-        contact:r.contact, carId:r.car_id, carDisplay:r.car_display,
-        status:r.status, timestamp:r.timestamp, date:r.date, time:r.time,
-        preferredTransacType:r.preferred_transac_type, customerType:r.customer_type,
-        salesConsultantName:r.sales_consultant_name, dealershipName:r.dealership_name
+        id: r.id, ticketNumber: r.ticket_number, name: r.name, address: r.address,
+        contact: r.contact, carId: r.car_id, carDisplay: r.car_display,
+        status: r.status, timestamp: r.timestamp, date: r.date, time: r.time,
+        preferredTransacType: r.preferred_transac_type, customerType: r.customer_type,
+        salesConsultantName: r.sales_consultant_name, dealershipName: r.dealership_name
     };
 }
 
@@ -61,7 +25,7 @@ router.get('/', async (req, res) => {
         if (status) { sql += ' AND status  = ?'; args.push(status); }
         sql += ' ORDER BY timestamp ASC';
         res.json(db.all(sql, ...args).map(mapReg));
-    } catch(err) { res.status(500).json({ error: err.message }); }
+    } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
 // ── GET one ───────────────────────────────────────────────────────────────────
@@ -71,18 +35,18 @@ router.get('/:id', async (req, res) => {
         const row = db.get('SELECT * FROM registrations WHERE id = ?', req.params.id);
         if (!row) return res.status(404).json({ error: 'Registration not found' });
         res.json(mapReg(row));
-    } catch(err) { res.status(500).json({ error: err.message }); }
+    } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
-// ── POST (create + SMS) ───────────────────────────────────────────────────────
+// ── POST (create) ─────────────────────────────────────────────────────────────
 router.post('/', async (req, res) => {
     try {
         const db = await getDB();
         const { name, address, contact, carId,
                 preferredTransacType, customerType, salesConsultantName, dealershipName } = req.body;
 
-        if (!name?.trim() || !address?.trim() || !contact?.trim() || !carId)
-            return res.status(400).json({ error: 'All fields (name, address, contact, carId) are required.' });
+        if (!name?.trim() || !contact?.trim() || !carId)
+            return res.status(400).json({ error: 'All fields (name, contact, carId) are required.' });
         if (!/^09\d{9}$/.test(contact.trim()))
             return res.status(400).json({ error: 'Contact must be an 11-digit PH mobile number (e.g. 09171234567).' });
 
@@ -102,7 +66,7 @@ router.post('/', async (req, res) => {
                  (ticket_number,name,address,contact,car_id,car_display,status,timestamp,date,time,
                   preferred_transac_type,customer_type,sales_consultant_name,dealership_name)
                  VALUES (?,?,?,?,?,?,'waiting',?,?,?,?,?,?,?)`,
-                ticketNumber, name.trim(), address.trim(), contact.trim(),
+                ticketNumber, name.trim(), (address || '').trim(), contact.trim(),
                 carId, carDisplay, now.getTime(),
                 now.toLocaleDateString(), now.toLocaleTimeString(),
                 (preferredTransacType || '').trim(), (customerType || '').trim(),
@@ -112,19 +76,9 @@ router.post('/', async (req, res) => {
             newReg = db.get('SELECT * FROM registrations WHERE id = ?', id);
         });
 
-        // Respond immediately — don't block on SMS
         res.status(201).json(mapReg(newReg));
 
-        // Send SMS non-blocking
-        const mapped = mapReg(newReg);
-        const smsMessage =
-            `Hi ${mapped.name}! Your queue ticket is ${mapped.ticketNumber} ` +
-            `for ${mapped.carDisplay}. Please wait for your number to be called. Thank you!`;
-
-        sendSMS(mapped.contact, smsMessage)
-            .catch(err => console.error('[Semaphore] SMS failed:', err.message));
-
-    } catch(err) { res.status(500).json({ error: err.message }); }
+    } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
 // ── DELETE ────────────────────────────────────────────────────────────────────
@@ -142,7 +96,7 @@ router.delete('/:id', async (req, res) => {
             db.run('DELETE FROM registrations WHERE id = ?', reg.id);
         });
         res.json({ success: true });
-    } catch(err) { res.status(500).json({ error: err.message }); }
+    } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
 module.exports = router;

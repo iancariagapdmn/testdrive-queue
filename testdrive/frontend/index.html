@@ -13,7 +13,7 @@
     <!-- ═══════════════════════════ NAVIGATION ══════════════════════════════ -->
     <nav class="nav">
         <a href="/" class="logo">
-            <img src="logo.png" alt="Company Logo" width="220" height="40">
+            <img src="logo.png" alt="Company Logo" width="220" height="50">
         </a>
         <div class="nav-links">
             <button onclick="showPage('display')" class="active" id="nav-display">Display</button>
@@ -28,8 +28,7 @@
     <!-- ═══════════════════════ PAGE: DISPLAY ═══════════════════════════════ -->
     <div class="page active" id="page-display">
         <div class="display-container">
-            <h1 class="display-header" style="color: #ffffff;">2026 AUTOFOCUS SUMMER MULTI-BRAND TEST DRIVE FESTIVAL
-            </h1>
+            <h1 class="display-header" style="color: #ffffff;">2026 AUTOFOCUS SUMMER MULTI-BRAND TEST DRIVE FESTIVAL</h1>
             <div class="car-displays" id="car-displays"></div>
         </div>
     </div>
@@ -44,30 +43,8 @@
                     <input type="text" id="reg-name" required placeholder="Enter your full name">
                 </div>
                 <div class="form-group">
-                    <label><b>Address *</b></label>
-                    <input type="text" id="reg-address" required placeholder="Enter your address">
-                </div>
-                <div class="form-group">
                     <label><b>Contact Number *</b></label>
-                    <input type="tel" id="reg-contact" required
-                        placeholder="Enter your 11-digit mobile number (e.g. 09171234567)">
-                </div>
-                <div class="form-group">
-                    <label><b>Preferred Transaction Type *</b></label>
-                    <input type="text" id="reg-PrefTransac" required placeholder="Gcash, Financing, Bank P.O">
-                </div>
-                <div class="form-group">
-                    <label><b>Customer Type *</b></label>
-                    <input type="text" id="reg-customer" required
-                        placeholder="Walk-In, Invited by Dealer SE, Invited by OJPH CRM, Livestream">
-                </div>
-                <div class="form-group">
-                    <label><b>Sales Consultant Name *</b></label>
-                    <input type="text" id="reg-consult" required placeholder="Enter sales consultant name">
-                </div>
-                <div class="form-group">
-                    <label><b>Dealership Name *</b></label>
-                    <input type="text" id="reg-dealer" required placeholder="Enter dealership name">
+                    <input type="tel" id="reg-contact" required placeholder="Enter your 11-digit mobile number (e.g. 09171234567)">
                 </div>
                 <div class="form-group">
                     <label><b>Select Car Model *</b></label>
@@ -83,16 +60,14 @@
         <div class="ticket-container">
             <div id="no-ticket" style="text-align:center; padding:3rem;">
                 <h2 style="color:var(--text-muted); margin-bottom:1rem;">No Active Ticket</h2>
-                <p style="color:var(--text-muted); margin-bottom:2rem;">Register for a test drive to get your ticket.
-                </p>
-                <button class="btn btn-primary" onclick="showPage('register')" style="max-width:300px;">Register
-                    Now</button>
+                <p style="color:var(--text-muted); margin-bottom:2rem;">Register for a test drive to get your ticket.</p>
+                <button class="btn btn-primary" onclick="showPage('register')" style="max-width:300px;">Register Now</button>
             </div>
             <div id="ticket-display" style="display:none;">
                 <div class="ticket" id="printable-ticket">
                     <div class="ticket-header">
                         <div class="ticket-brand">OMODA | JAECOO</div>
-                        <div class="ticket-subtitle">Your Queue Ticket</div>
+                        <div class="ticket-subtitle">2026 AUTOFOCUS SUMMER MULTI-BRAND TEST DRIVE FESTIVAL</div>
                     </div>
                     <div class="ticket-number" id="ticket-number">---</div>
                     <div class="ticket-car" id="ticket-car">---</div>
@@ -100,10 +75,6 @@
                         <div class="ticket-detail">
                             <span class="ticket-detail-label">Name</span>
                             <span class="ticket-detail-value" id="ticket-name">---</span>
-                        </div>
-                        <div class="ticket-detail">
-                            <span class="ticket-detail-label">Contact</span>
-                            <span class="ticket-detail-value" id="ticket-contact">---</span>
                         </div>
                         <div class="ticket-detail">
                             <span class="ticket-detail-label">Date</span>
@@ -114,11 +85,9 @@
                             <span class="ticket-detail-value" id="ticket-position">---</span>
                         </div>
                     </div>
-                    <div class="ticket-footer">Please wait for your number to be called.<br>Thank you for your patience!
-                    </div>
+                    <div class="ticket-footer">Please wait for your number to be called.<br>Thank you for your patience!</div>
                 </div>
-                <button class="btn btn-primary print-btn" onclick="printTicket()" style="margin-top:2rem;">🖨️ Print
-                    Ticket</button>
+                <button class="btn btn-primary print-btn" onclick="printTicket()" style="margin-top:2rem;">🖨️ Print Ticket</button>
             </div>
         </div>
     </div>
@@ -161,7 +130,7 @@
                         <input type="text" class="search-box" placeholder="Search registrations…" id="search-box"
                             oninput="filterTable()">
                         <div class="export-btns">
-                            <button class="btn-excel" onclick="exportToCSV()">📊 Export Excel</button>
+                            <button class="btn-excel" onclick="exportToCSV()">📊 Export CSV</button>
                             <button class="btn-pdf" onclick="exportToPDF()">📄 Export PDF</button>
                         </div>
                     </div>
@@ -174,10 +143,6 @@
                                 <th style="color: #ffffff;">Car Model</th>
                                 <th style="color: #ffffff;">Status</th>
                                 <th style="color: #ffffff;">Time</th>
-                                <th style="color: #ffffff;">Preferred Transaction Type</th>
-                                <th style="color: #ffffff;">Customer Type</th>
-                                <th style="color: #ffffff;">Sales Consultant Name</th>
-                                <th style="color: #ffffff;">Dealership Name</th>
                                 <th style="color: #ffffff;">Actions</th>
                             </tr>
                         </thead>
@@ -240,15 +205,14 @@
                     <button class="btn btn-secondary" onclick="resetCarForm()" style="flex:1;">Clear</button>
                 </div>
             </div>
-            <h4 style="margin-top:1.5rem; border-bottom:1px solid var(--border); padding-bottom:0.5rem;">Current
-                Vehicles</h4>
+            <h4 style="margin-top:1.5rem; border-bottom:1px solid var(--border); padding-bottom:0.5rem;">Current Vehicles</h4>
             <div class="car-manager-list" id="car-manager-list"></div>
         </div>
     </div>
 
     <!-- JavaScript modules -->
     <script src="/js/api.js"></script>
-    <script src="/js/ui.js"></script> <!-- ← load ui.js first -->
+    <script src="/js/ui.js"></script>
     <script src="/js/admin.js"></script>
     <script src="/js/app.js"></script>
 

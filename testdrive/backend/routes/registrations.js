@@ -1,6 +1,6 @@
 // backend/routes/registrations.js
 const express = require('express');
-const router  = require('express').Router();
+const router = require('express').Router();
 const { getDB } = require('../db');
 
 // ── Mapper ────────────────────────────────────────────────────────────────────
@@ -21,7 +21,7 @@ router.get('/', async (req, res) => {
         const { carId, status } = req.query;
         let sql = 'SELECT * FROM registrations WHERE 1=1';
         const args = [];
-        if (carId)  { sql += ' AND car_id = ?'; args.push(carId); }
+        if (carId) { sql += ' AND car_id = ?'; args.push(carId); }
         if (status) { sql += ' AND status  = ?'; args.push(status); }
         sql += ' ORDER BY timestamp ASC';
         res.json(db.all(sql, ...args).map(mapReg));
@@ -31,7 +31,7 @@ router.get('/', async (req, res) => {
 // ── GET one ───────────────────────────────────────────────────────────────────
 router.get('/:id', async (req, res) => {
     try {
-        const db  = await getDB();
+        const db = await getDB();
         const row = db.get('SELECT * FROM registrations WHERE id = ?', req.params.id);
         if (!row) return res.status(404).json({ error: 'Registration not found' });
         res.json(mapReg(row));
@@ -43,7 +43,7 @@ router.post('/', async (req, res) => {
     try {
         const db = await getDB();
         const { name, address, contact, carId,
-                preferredTransacType, customerType, salesConsultantName, dealershipName } = req.body;
+            preferredTransacType, customerType, salesConsultantName, dealershipName } = req.body;
 
         if (!name?.trim() || !contact?.trim() || !carId)
             return res.status(400).json({ error: 'All fields (name, contact, carId) are required.' });
@@ -54,23 +54,26 @@ router.post('/', async (req, res) => {
         if (!car) return res.status(404).json({ error: 'Car not found.' });
 
         let newReg;
+        const phOptions = { timeZone: 'Asia/Manila', hour12: true };
         db.transaction(() => {
             db.run('UPDATE ticket_counters SET counter = counter + 1 WHERE car_id = ?', carId);
             const counter = db.get('SELECT counter FROM ticket_counters WHERE car_id = ?', carId).counter;
-            const prefix  = car.model.split(' ').map(w => w[0]).join('').toUpperCase().substring(0, 2) || 'TK';
+            const prefix = car.model.split(' ').map(w => w[0]).join('').toUpperCase().substring(0, 2) || 'TK';
             const ticketNumber = `${prefix}-${String(counter).padStart(3, '0')}`;
             const now = new Date();
             const carDisplay = `${car.model}${car.plate ? ` (${car.plate})` : ''}`;
+            const phDate = now.toLocaleDateString('en-PH', phOptions);
+            const phTime = now.toLocaleTimeString('en-PH', phOptions);
             db.run(
                 `INSERT INTO registrations
-                 (ticket_number,name,address,contact,car_id,car_display,status,timestamp,date,time,
-                  preferred_transac_type,customer_type,sales_consultant_name,dealership_name)
-                 VALUES (?,?,?,?,?,?,'waiting',?,?,?,?,?,?,?)`,
+         (ticket_number,name,address,contact,car_id,car_display,status,timestamp,date,time,
+          preferred_transac_type,customer_type,sales_consultant_name,dealership_name)
+         VALUES (?,?,?,?,?,?,'waiting',?,?,?,?,?,?,?)`,
                 ticketNumber, name.trim(), (address || '').trim(), contact.trim(),
                 carId, carDisplay, now.getTime(),
-                now.toLocaleDateString(), now.toLocaleTimeString(),
+                phDate, phTime,
                 (preferredTransacType || '').trim(), (customerType || '').trim(),
-                (salesConsultantName  || '').trim(), (dealershipName   || '').trim()
+                (salesConsultantName || '').trim(), (dealershipName || '').trim()
             );
             const id = db.lastInsertRowid();
             newReg = db.get('SELECT * FROM registrations WHERE id = ?', id);
@@ -84,7 +87,7 @@ router.post('/', async (req, res) => {
 // ── DELETE ────────────────────────────────────────────────────────────────────
 router.delete('/:id', async (req, res) => {
     try {
-        const db  = await getDB();
+        const db = await getDB();
         const reg = db.get('SELECT * FROM registrations WHERE id = ?', req.params.id);
         if (!reg) return res.status(404).json({ error: 'Registration not found' });
         db.transaction(() => {

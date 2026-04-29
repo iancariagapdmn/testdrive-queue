@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Omoda & Jaecoo Test Drive Queue</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <!-- ═══════════════════════════ NAVIGATION ══════════════════════════════ -->
+    <nav class="nav">
+        <a href="/" class="logo">
+            <img src="logo.png" alt="Company Logo" width="220" height="40">
+        </a>
+        <div class="nav-links">
+            <button onclick="showPage('display')" class="active" id="nav-display">Display</button>
+            <button onclick="showPage('register')" id="nav-register">Register</button>
+            <button onclick="showPage('ticket')" id="nav-ticket">My Ticket</button>
+            <button onclick="showPage('admin')" id="nav-admin">Admin</button>
+        </div>
+    </nav>
+
+    <div class="notification" id="notification"></div>
+
+    <!-- ═══════════════════════ PAGE: DISPLAY ═══════════════════════════════ -->
+    <div class="page active" id="page-display">
+        <div class="display-container">
+            <h1 class="display-header" style="color: #ffffff;">2026 AUTOFOCUS SUMMER MULTI-BRAND TEST DRIVE FESTIVAL
+            </h1>
+            <div class="car-displays" id="car-displays"></div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════ PAGE: REGISTER ══════════════════════════════ -->
+    <div class="page" id="page-register">
+        <div class="form-container">
+            <h2 class="form-title" style="color: #f6f6f6;">Register for Test Drive</h2>
+            <form id="registration-form">
+                <div class="form-group">
+                    <label><b>Full Name *</b></label>
+                    <input type="text" id="reg-name" required placeholder="Enter your full name">
+                </div>
+                <div class="form-group">
+                    <label><b>Address *</b></label>
+                    <input type="text" id="reg-address" required placeholder="Enter your address">
+                </div>
+                <div class="form-group">
+                    <label><b>Contact Number *</b></label>
+                    <input type="tel" id="reg-contact" required
+                        placeholder="Enter your 11-digit mobile number (e.g. 09171234567)">
+                </div>
+                <div class="form-group">
+                    <label><b>Preferred Transaction Type *</b></label>
+                    <input type="text" id="reg-PrefTransac" required placeholder="Gcash, Financing, Bank P.O">
+                </div>
+                <div class="form-group">
+                    <label><b>Customer Type *</b></label>
+                    <input type="text" id="reg-customer" required
+                        placeholder="Walk-In, Invited by Dealer SE, Invited by OJPH CRM, Livestream">
+                </div>
+                <div class="form-group">
+                    <label><b>Sales Consultant Name *</b></label>
+                    <input type="text" id="reg-consult" required placeholder="Enter sales consultant name">
+                </div>
+                <div class="form-group">
+                    <label><b>Dealership Name *</b></label>
+                    <input type="text" id="reg-dealer" required placeholder="Enter dealership name">
+                </div>
+                <div class="form-group">
+                    <label><b>Select Car Model *</b></label>
+                    <div class="car-options" id="dynamic-car-options"></div>
+                </div>
+                <button type="submit" class="btn btn-primary">Register &amp; Get Ticket</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════ PAGE: MY TICKET ═════════════════════════════ -->
+    <div class="page" id="page-ticket">
+        <div class="ticket-container">
+            <div id="no-ticket" style="text-align:center; padding:3rem;">
+                <h2 style="color:var(--text-muted); margin-bottom:1rem;">No Active Ticket</h2>
+                <p style="color:var(--text-muted); margin-bottom:2rem;">Register for a test drive to get your ticket.
+                </p>
+                <button class="btn btn-primary" onclick="showPage('register')" style="max-width:300px;">Register
+                    Now</button>
+            </div>
+            <div id="ticket-display" style="display:none;">
+                <div class="ticket" id="printable-ticket">
+                    <div class="ticket-header">
+                        <div class="ticket-brand">OMODA | JAECOO</div>
+                        <div class="ticket-subtitle">Your Queue Ticket</div>
+                    </div>
+                    <div class="ticket-number" id="ticket-number">---</div>
+                    <div class="ticket-car" id="ticket-car">---</div>
+                    <div class="ticket-details">
+                        <div class="ticket-detail">
+                            <span class="ticket-detail-label">Name</span>
+                            <span class="ticket-detail-value" id="ticket-name">---</span>
+                        </div>
+                        <div class="ticket-detail">
+                            <span class="ticket-detail-label">Contact</span>
+                            <span class="ticket-detail-value" id="ticket-contact">---</span>
+                        </div>
+                        <div class="ticket-detail">
+                            <span class="ticket-detail-label">Date</span>
+                            <span class="ticket-detail-value" id="ticket-date">---</span>
+                        </div>
+                        <div class="ticket-detail">
+                            <span class="ticket-detail-label">Position in Queue</span>
+                            <span class="ticket-detail-value" id="ticket-position">---</span>
+                        </div>
+                    </div>
+                    <div class="ticket-footer">Please wait for your number to be called.<br>Thank you for your patience!
+                    </div>
+                </div>
+                <button class="btn btn-primary print-btn" onclick="printTicket()" style="margin-top:2rem;">🖨️ Print
+                    Ticket</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════ PAGE: ADMIN ═════════════════════════════════ -->
+    <div class="page" id="page-admin">
+
+        <!-- Login -->
+        <div class="admin-login" id="admin-login">
+            <h2 class="admin-login-title">🔐 Admin Login</h2>
+            <form id="login-form">
+                <div class="form-group">
+                    <label style="color: #ffffff;"><b>Username</b></label>
+                    <input type="text" id="admin-username" required placeholder="Enter username">
+                </div>
+                <div class="form-group">
+                    <label style="color: #ffffff;"><b>Password</b></label>
+                    <input type="password" id="admin-password" required placeholder="Enter password">
+                </div>
+                <button type="submit" class="btn btn-primary">Login</button>
+            </form>
+        </div>
+
+        <!-- Dashboard (hidden until logged in) -->
+        <div class="admin-dashboard" id="admin-dashboard">
+            <div class="admin-header">
+                <h1 class="admin-title" style="color: #ffffff;">📊 Admin Dashboard</h1>
+                <button class="btn btn-secondary" onclick="adminLogout()" style="width:auto;">Logout</button>
+            </div>
+
+            <div class="admin-tabs">
+                <button class="admin-tab active" onclick="showAdminPanel('responses', event)">📋 Responses</button>
+                <button class="admin-tab" onclick="showAdminPanel('callout', event)">📢 Call Out Dashboard</button>
+            </div>
+
+            <!-- Tab: Responses -->
+            <div class="admin-panel active" id="panel-responses">
+                <div class="response-table-container">
+                    <div class="table-controls">
+                        <input type="text" class="search-box" placeholder="Search registrations…" id="search-box"
+                            oninput="filterTable()">
+                        <div class="export-btns">
+                            <button class="btn-excel" onclick="exportToCSV()">📊 Export Excel</button>
+                            <button class="btn-pdf" onclick="exportToPDF()">📄 Export PDF</button>
+                        </div>
+                    </div>
+                    <table class="response-table">
+                        <thead>
+                            <tr>
+                                <th style="color: #ffffff;">Ticket #</th>
+                                <th style="color: #ffffff;">Name</th>
+                                <th style="color: #ffffff;">Contact</th>
+                                <th style="color: #ffffff;">Car Model</th>
+                                <th style="color: #ffffff;">Status</th>
+                                <th style="color: #ffffff;">Time</th>
+                                <th style="color: #ffffff;">Preferred Transaction Type</th>
+                                <th style="color: #ffffff;">Customer Type</th>
+                                <th style="color: #ffffff;">Sales Consultant Name</th>
+                                <th style="color: #ffffff;">Dealership Name</th>
+                                <th style="color: #ffffff;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="response-table-body"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Tab: Call Out Dashboard -->
+            <div class="admin-panel" id="panel-callout">
+                <div class="callout-header-actions">
+                    <h2 style="color: #ffffff; font-size:1.2rem;">Live Queue Management</h2>
+                    <button class="btn btn-secondary" onclick="openCarManager()"
+                        style="width:auto; padding:0.5rem 1rem;">⚙️ Manage Vehicles</button>
+                </div>
+                <div class="callout-dashboard" id="callout-dashboard"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════ MODALS ══════════════════════════════════════ -->
+
+    <!-- Confirm Modal -->
+    <div class="modal-overlay" id="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modal-title">Confirm Action</h3>
+                <button class="modal-close" onclick="closeModal()">×</button>
+            </div>
+            <div id="modal-body">
+                <p id="modal-message">Are you sure?</p>
+            </div>
+            <div style="display:flex; gap:1rem; margin-top:1.5rem;">
+                <button class="btn btn-secondary" onclick="closeModal()" style="flex:1;">Cancel</button>
+                <button class="btn btn-danger" id="modal-confirm" style="flex:1;">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Car Manager Modal -->
+    <div class="modal-overlay" id="car-manager-modal">
+        <div class="modal" style="max-width:600px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Manage Vehicles</h3>
+                <button class="modal-close" onclick="closeCarManager()">×</button>
+            </div>
+            <div style="background:rgba(255,255,255,0.05); padding:1.5rem; border-radius:10px; margin-bottom:1rem;">
+                <h4 style="margin-bottom:1rem; color:#ffffff;" id="car-form-title">Add New Vehicle</h4>
+                <input type="hidden" id="edit-car-id">
+                <div class="form-group">
+                    <label><b>Model Name</b></label>
+                    <input type="text" id="new-car-model" placeholder="e.g. Omoda E5">
+                </div>
+                <div class="form-group">
+                    <label><b>Plate Number (Optional)</b></label>
+                    <input type="text" id="new-car-plate" placeholder="e.g. ABC-1234">
+                </div>
+                <div style="display:flex; gap:1rem;">
+                    <button class="btn btn-success" onclick="saveVehicle()" style="flex:2;">Save Vehicle</button>
+                    <button class="btn btn-secondary" onclick="resetCarForm()" style="flex:1;">Clear</button>
+                </div>
+            </div>
+            <h4 style="margin-top:1.5rem; border-bottom:1px solid var(--border); padding-bottom:0.5rem;">Current
+                Vehicles</h4>
+            <div class="car-manager-list" id="car-manager-list"></div>
+        </div>
+    </div>
+
+    <!-- JavaScript modules -->
+    <script src="/js/api.js"></script>
+    <script src="/js/ui.js"></script> <!-- ← load ui.js first -->
+    <script src="/js/admin.js"></script>
+    <script src="/js/app.js"></script>
+
+</html>

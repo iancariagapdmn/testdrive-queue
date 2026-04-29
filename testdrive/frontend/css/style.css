@@ -298,7 +298,7 @@ body {
 .status-completed { background: rgba(0,255,64,0.2); color: #ffffff; }
 
 /* ── Call Out Dashboard ── */
-.callout-dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 2rem; }
+.callout-dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 2rem; align-items: start; }
 .callout-card {
     background: var(--card-bg);
     border-radius: 20px;
@@ -324,7 +324,7 @@ body {
 .callout-current-ticket { font-size: 2rem; font-weight: bold; color: var(--success); }
 .callout-current-name   { font-size: 1rem; color: var(--text); }
 
-.callout-queue-list { max-height: 150px; overflow-y: auto; }
+.callout-queue-list { height: 150px; overflow-y: auto; }
 .callout-queue-item {
     display: flex;
     justify-content: space-between;

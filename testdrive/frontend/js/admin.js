@@ -58,10 +58,7 @@ async function renderCalloutDashboard() {
             card.className = 'callout-card';
             card.innerHTML = `
                 <div class="callout-card-header">
-                    <span class="callout-car-name">
-                        ${car.model}
-                        ${car.plate ? `<span style="font-size:0.8rem; font-weight:normal;">(${car.plate})</span>` : ''}
-                    </span>
+                    <span class="callout-car-name">${car.model}</span>
                     <span class="callout-status ${car.available ? 'status-available' : 'status-in-use'}">
                         ${car.available ? 'Available' : 'In Use'}
                     </span>
@@ -107,7 +104,7 @@ async function handleCallNext(carId) {
     try {
         const result = await QueueAPI.callNext(carId);
         if (result.next) {
-            playVoiceAnnouncement(result.next.ticketNumber, result.next.carDisplay);
+            playVoiceAnnouncement(result.next.ticketNumber, result.next.carDisplay.split(" (")[0]);
             showNotification(`Calling ${result.next.ticketNumber} — SMS sent`);
             setTimeout(() => QueueAPI.clearCalling(carId), 5000);
         } else {
@@ -125,7 +122,7 @@ async function handleCallAgain(carId) {
     try {
         const result = await QueueAPI.callAgain(carId);
         if (result.current) {
-            playVoiceAnnouncement(result.current.ticketNumber, result.current.carDisplay);
+            playVoiceAnnouncement(result.current.ticketNumber, result.current.carDisplay.split(" (")[0]);
             showNotification(`Re-calling ${result.current.ticketNumber} — SMS sent`);
             setTimeout(() => QueueAPI.clearCalling(carId), 5000);
         }

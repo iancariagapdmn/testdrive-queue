@@ -9,7 +9,7 @@ const registrationsRouter = require('./routes/registrations');
 const queueRouter         = require('./routes/queue');
 
 const app  = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 7500;
 
 // safety logs
 process.on('uncaughtException', (err) => {

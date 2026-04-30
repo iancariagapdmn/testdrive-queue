@@ -3,14 +3,14 @@ const express = require('express');
 const router = express.Router();
 const { getDB } = require('../db');
 
-// ── Semaphore SMS ─────────────────────────────────────────────────────────────
-async function sendSMS(contactNumber, ticketNumber, carDisplay) {
-    const url = process.env.TRACCAR_URL;
+// ── SMS ───────────────────────────────────────────────────────────────────────
+async function sendSMS(contactNumber, ticketNumber, carDisplay, customMessage = null) {
+    const url   = process.env.TRACCAR_URL;
     const token = process.env.TRACCAR_TOKEN;
     if (!url || !token || !contactNumber) return;
 
     const to = contactNumber.replace(/^0/, '+63');
-    const message =
+    const message = customMessage ||
         `Hi! Your ${carDisplay} is ready for you. Ticket ${ticketNumber} ` +
         `Kindly proceed to the Omoda & Jaecoo test drive area.`;
 
@@ -18,7 +18,7 @@ async function sendSMS(contactNumber, ticketNumber, carDisplay) {
         const res = await fetch(`${url}/`, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
+                'Content-Type':  'application/json',
                 'Authorization': token,
             },
             body: JSON.stringify({ to, message }),
@@ -87,7 +87,6 @@ router.post('/:carId/call-next', async (req, res) => {
             }
         });
 
-        // Fire SMS after transaction (non-blocking)
         if (nextReg) {
             sendSMS(nextReg.contact, nextReg.ticket_number, nextReg.car_display);
         }
@@ -108,11 +107,14 @@ router.post('/:carId/call-again', async (req, res) => {
         const reg = db.get('SELECT * FROM registrations WHERE id = ?', status.current_serving_id);
         if (!reg) return res.status(404).json({ error: 'Current registration not found' });
 
-        // Set calling flag so the display card pulses
         db.run('UPDATE car_status SET calling = 1 WHERE car_id = ?', carId);
 
-        // Re-send SMS (non-blocking)
-        sendSMS(reg.contact, reg.ticket_number, reg.car_display);
+        const carModel = reg.car_display.split(' (')[0];
+        const callAgainMessage =
+            `Hi! We're ready for your ${carModel} test drive (Ticket ${reg.ticket_number}). ` +
+            `We can hold your slot for 15 more minutes. Please head to the Omoda & Jaecoo area now so you don't miss out!`;
+
+        sendSMS(reg.contact, reg.ticket_number, reg.car_display, callAgainMessage);
 
         res.json({ current: mapReg(reg) });
     } catch (err) { res.status(500).json({ error: err.message }); }
